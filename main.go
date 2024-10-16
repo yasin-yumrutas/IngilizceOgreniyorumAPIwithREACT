@@ -14,9 +14,15 @@ func main() {
 		log.Println(err)
 	}
 
-	buildPath := filepath.Join(wd, "my-app", "build", "index.html")
-	fs := http.FileServer(http.Dir(buildPath))
-	http.Handle("/", fs)
+	buildPath := filepath.Join(wd, "my-app", "build")
+	// fs := http.FileServer(http.Dir(buildPath))
+	// http.Handle("/", fs)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+		if r.URL.Path != "/"{
+			http.ServeFile(w,r,filepath.Join(buildPath,"index.html"))
+		}
+		http.ServeFile(w,r,filepath.Join(buildPath,"index.html"))
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
